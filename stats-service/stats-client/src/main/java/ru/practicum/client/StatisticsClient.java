@@ -10,7 +10,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.StatDto;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class StatisticsClient  extends BaseClient {
