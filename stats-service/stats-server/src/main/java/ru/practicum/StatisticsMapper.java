@@ -2,6 +2,7 @@ package ru.practicum;
 
 import ru.practicum.StatDto;
 import ru.practicum.StatInDto;
+import ru.practicum.exception.ErrorResponse;
 
 public class StatisticsMapper {
     public static StatDto toStatDto(Statistics statistics) {
@@ -20,5 +21,9 @@ public class StatisticsMapper {
                 statInDto.getIp(),
                 statInDto.getTimestamp()
         );
+    }
+
+    public static ErrorResponse toErrorResponse(String error, String description) {
+        return new ErrorResponse(error, description);
     }
 }
