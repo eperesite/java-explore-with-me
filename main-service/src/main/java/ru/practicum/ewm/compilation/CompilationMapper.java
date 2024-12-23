@@ -1,17 +1,17 @@
 package ru.practicum.ewm.compilation;
 
-import ru.practicum.ewm.compilation.dto.CompilationRequestDto;
-import ru.practicum.ewm.compilation.dto.CompilationResponseDto;
-import ru.practicum.ewm.event.mapper.EventMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.ewm.event.mapper.EventMapper;
+import ru.practicum.ewm.compilation.dto.CompilationDto;
+import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompilationMapper {
-    public static CompilationResponseDto toResponseDto(Compilation compilation) {
-        return CompilationResponseDto.builder()
+    public static CompilationDto toDto(Compilation compilation) {
+        return CompilationDto.builder()
                 .id(compilation.getId())
                 .events(compilation.getEvents().stream()
                         .map(EventMapper::toEventShortDto)
@@ -21,10 +21,10 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static Compilation toEntity(CompilationRequestDto request) {
+    public  static Compilation toCompilation(NewCompilationDto compilationDto) {
         return Compilation.builder()
-                .pinned(request.getPinned())
-                .title(request.getTitle())
+                .pinned(compilationDto.getPinned())
+                .title(compilationDto.getTitle())
                 .build();
     }
 }

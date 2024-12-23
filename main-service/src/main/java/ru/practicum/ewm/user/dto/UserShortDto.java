@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserShortResponseDto {
-    Long userId;
-    String fullName;
+public class UserShortDto {
+    Long id;
+    String name;
 }

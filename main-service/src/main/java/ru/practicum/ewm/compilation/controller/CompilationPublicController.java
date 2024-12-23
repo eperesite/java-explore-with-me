@@ -1,4 +1,4 @@
-package ru.practicum.ewm.compilation.controller;
+package ru.practicum.ewm.compilation.contoller;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -7,32 +7,32 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.compilation.dto.CompilationResponseDto;
-import ru.practicum.ewm.compilation.service.CompilationQueryService;
+import ru.practicum.ewm.compilation.dto.CompilationDto;
+import ru.practicum.ewm.compilation.service.CompilationService;
 
 import java.util.List;
 
-@Slf4j
-@Validated
 @RestController
-@RequestMapping("/compilations")
+@RequestMapping(path = "/compilations")
 @RequiredArgsConstructor
+@Validated
+@Slf4j
 public class CompilationPublicController {
-    private final CompilationQueryService compilationService;
+    private final CompilationService compilationService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CompilationResponseDto> getAll(
+    public List<CompilationDto> get(
             @RequestParam(required = false) Boolean pinned,
-            @RequestParam(defaultValue = "0") @PositiveOrZero Integer offset,
-            @RequestParam(defaultValue = "10") @Positive Integer limit) {
-        log.info("Fetching compilations with pinned={}, offset={}, limit={}", pinned, offset, limit);
-        return compilationService.getAllCompilations(pinned, offset, limit);
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @Positive Integer size) {
+        log.info("==> Запрос на удаление подборки событий");
+        return compilationService.get(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
-    public CompilationResponseDto getById(@PathVariable Long compilationId) {
-        log.info("Fetching compilation with ID: {}", compilationId);
-        return compilationService.getCompilationById(compilationId);
+    public CompilationDto findById(@PathVariable Long compId) {
+        log.info("==> Запрос на получение подборки с id =  {} ", + compId);
+        return compilationService.findById(compId);
     }
 }

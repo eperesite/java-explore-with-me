@@ -1,7 +1,8 @@
 package ru.practicum.ewm.event.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import lombok.*;
+import jakarta.persistence.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.category.Category;
 import ru.practicum.ewm.location.Location;
@@ -9,57 +10,56 @@ import ru.practicum.ewm.user.User;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "events")
+@Entity(name = "events")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false, length = 2000)
+    @Column(name = "annotation", nullable = false, length = 2000)
     String annotation;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "initiator_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "initiator_id")
     User initiator;
 
     @Column(name = "confirmed_requests")
     Integer confirmedRequests;
 
-    @Column(length = 7000)
+    @Column(name = "description", length = 7000)
     String description;
 
-    @Column(nullable = false, length = 120)
+    @Column(name = "title", nullable = false, length = 120)
     String title;
 
     @Column(name = "event_date", nullable = false)
     LocalDateTime eventDate;
 
-    @Column(name = "created_date")
+    @Column(name = "create_date")
     LocalDateTime createdDate;
 
-    @ManyToOne
-    @JoinColumn(name = "location_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "location_id")
     Location location;
 
-    @Column(nullable = false)
+    @Column(name = "paid")
     boolean paid;
 
     @Column(name = "participant_limit")
     Integer participantLimit;
 
     @Column(name = "published_date")
-    LocalDateTime publishedDate;
+    LocalDateTime publisherDate;
 
     @Column(name = "request_moderation")
     boolean requestModeration;
@@ -67,4 +67,5 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     EventStatus eventStatus;
+
 }

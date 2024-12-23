@@ -6,29 +6,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.category.dto.CategoryResponseDto;
-import ru.practicum.ewm.category.service.CategoryQueryService;
+import ru.practicum.ewm.category.dto.CategoryOutDto;
+import ru.practicum.ewm.category.service.CategoryService;
 
 import java.util.List;
 
-@Slf4j
-@Validated
 @RestController
-@RequestMapping("/categories")
+@RequestMapping(path = "/categories")
 @RequiredArgsConstructor
+@Validated
+@Slf4j
 public class CategoryPublicController {
-    private final CategoryQueryService categoryService;
+    private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryResponseDto> getAll(@RequestParam(defaultValue = "0") @PositiveOrZero Integer offset,
-                                            @RequestParam(defaultValue = "10") @Positive Integer limit) {
-        log.info("Fetching categories with offset: {} and limit: {}", offset, limit);
-        return categoryService.getAllCategories(offset, limit);
+    public List<CategoryOutDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                              @RequestParam(defaultValue = "10") @Positive Integer size) {
+        log.info("==> Запрос на получение категорий списком с размерами");
+        return categoryService.get(from, size);
     }
 
     @GetMapping("/{catId}")
-    public CategoryResponseDto getById(@PathVariable("catId") Long id) {
-        log.info("Fetching category with ID: {}", id);
-        return categoryService.getCategoryById(id);
+    public CategoryOutDto getCategory(@PathVariable(value = "catId") Long id) {
+        log.info("==> Запрос на получение категории с id={}", id);
+        return categoryService.getById(id);
     }
 }

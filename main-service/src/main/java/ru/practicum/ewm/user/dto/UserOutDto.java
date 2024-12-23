@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponseDto {
-    Long userId;
-    String fullName;
-    String emailAddress;
+public class UserOutDto {
+    Long id;
+    String name;
+    String email;
 }

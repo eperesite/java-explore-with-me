@@ -1,20 +1,22 @@
 package ru.practicum.ewm.compilation.dto;
 
-import ru.practicum.ewm.event.dto.EventShortDto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CompilationResponseDto {
-    Long id;
-    Set<EventShortDto> events;
+public class NewCompilationDto {
     Boolean pinned;
+    @NotBlank
+    @Size(min = 1, max = 50)
     String title;
+    Set<Long> events;
 }

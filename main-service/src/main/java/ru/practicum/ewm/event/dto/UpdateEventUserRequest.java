@@ -12,5 +12,5 @@ import ru.practicum.ewm.event.model.EventUserState;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateEventUserRequest extends UpdateEventBase {
-    EventUserState stateAction;
+    private EventUserState stateAction;
 }

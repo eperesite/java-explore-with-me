@@ -1,25 +1,26 @@
 package ru.practicum.ewm.comment;
 
-import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.*;
+import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.user.User;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "comments")
+@NoArgsConstructor
+@Builder
+@Entity(name = "comments")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
@@ -27,18 +28,18 @@ public class Comment {
     String text;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     Event event;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id")
     User author;
 
+    @Column(name = "created")
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    LocalDateTime created;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
-    LocalDateTime updatedAt;
+    @Column(name = "last_updated_on")
+    LocalDateTime lastUpdatedOn;
 }

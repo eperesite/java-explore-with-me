@@ -1,17 +1,17 @@
 package ru.practicum.ewm.category.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryRequestDto {
+public class CategoryInDto {
     @NotBlank
-    @Size(max = 50, message = "Maximum length is 50 characters")
+    @Size(max = 50, message = "Максимальная длина - 50 символов")
     String name;
 }

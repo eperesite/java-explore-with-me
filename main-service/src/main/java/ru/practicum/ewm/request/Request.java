@@ -13,23 +13,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "requests")
+@Entity(name = "requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long requestId;
+    Long id;
 
-    @Column(name = "created_at", nullable = false)
-    LocalDateTime createdAt;
+    @Column(name = "create_date", nullable = false)
+    LocalDateTime created;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     Event event;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id", nullable = false)
+    @JoinColumn(name = "requester_id")
     User requester;
 
     @Enumerated(EnumType.STRING)

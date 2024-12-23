@@ -1,40 +1,41 @@
-package ru.practicum.ewm.compilation.controller;
+package ru.practicum.ewm.compilation.contoller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.compilation.dto.CompilationRequestDto;
-import ru.practicum.ewm.compilation.dto.CompilationResponseDto;
-import ru.practicum.ewm.compilation.dto.CompilationUpdateRequestDto;
-import ru.practicum.ewm.compilation.service.CompilationManagementService;
+import ru.practicum.ewm.compilation.dto.CompilationDto;
+import ru.practicum.ewm.compilation.dto.NewCompilationDto;
+import ru.practicum.ewm.compilation.dto.UpdateCompilationDto;
+import ru.practicum.ewm.compilation.service.CompilationService;
 
-@Slf4j
 @RestController
-@RequestMapping("/admin/compilations")
+@Slf4j
 @RequiredArgsConstructor
+@RequestMapping(path = "/admin/compilations")
 public class CompilationAdminController {
-    private final CompilationManagementService compilationService;
+    private final CompilationService compilationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationResponseDto create(@RequestBody @Valid CompilationRequestDto request) {
-        log.info("Creating a new compilation: {}", request);
-        return compilationService.createCompilation(request);
+    public CompilationDto create(@RequestBody @Valid NewCompilationDto compilationDto) {
+        log.info("==> Запрос на создание подборки событий");
+        return compilationService.create(compilationDto);
     }
 
     @PatchMapping("/{compId}")
-    public CompilationResponseDto update(@PathVariable Long compilationId,
-                                         @RequestBody @Valid CompilationUpdateRequestDto update) {
-        log.info("Updating compilation with ID: {}", compilationId);
-        return compilationService.updateCompilation(compilationId, update);
+    public CompilationDto update(@RequestBody @Valid UpdateCompilationDto update,
+                                 @PathVariable Long compId) {
+        log.info("==> Запрос на обнавление подборки событий");
+        return compilationService.update(compId, update);
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long compilationId) {
-        log.info("Deleting compilation with ID: {}", compilationId);
-        compilationService.deleteCompilation(compilationId);
+    public void delete(@PathVariable Long compId) {
+        log.info("==> Запрос на удаление подборки событий");
+        compilationService.delete(compId);
     }
+
 }
