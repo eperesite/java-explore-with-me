@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,6 +18,6 @@ public class StatDto {
     String uri;
 
     String ip;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     LocalDateTime timestamp;
 }
