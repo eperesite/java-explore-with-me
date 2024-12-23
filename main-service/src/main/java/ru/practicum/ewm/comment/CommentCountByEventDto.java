@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CountCommentsByEventDto {
+public class CommentCountByEventDto {
     Long eventId;
     Long countComments;
 }

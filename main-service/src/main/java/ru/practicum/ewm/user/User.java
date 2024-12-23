@@ -1,10 +1,11 @@
 package ru.practicum.ewm.user;
 
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,7 +14,11 @@ import lombok.experimental.FieldDefaults;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String email;
+    Long userId;
+
+    @Column(nullable = false, length = 250)
+    String fullName;
+
+    @Column(nullable = false, unique = true, length = 254)
+    String emailAddress;
 }

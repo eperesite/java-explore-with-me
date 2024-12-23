@@ -7,37 +7,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.category.dto.CategoryInDto;
-import ru.practicum.ewm.category.dto.CategoryOutDto;
-import ru.practicum.ewm.category.service.CategoryService;
+import ru.practicum.ewm.category.dto.CategoryRequestDto;
+import ru.practicum.ewm.category.dto.CategoryResponseDto;
+import ru.practicum.ewm.category.service.CategoryManagementService;
 
 @Slf4j
 @Validated
 @RestController
-@RequestMapping(path = "/admin/categories")
+@RequestMapping("/admin/categories")
 @RequiredArgsConstructor
-public class  CategoryAdminController {
-    private final CategoryService categoryService;
+public class CategoryAdminController {
+    private final CategoryManagementService categoryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryOutDto createCategory(@RequestBody @Valid CategoryInDto categoryInDto) {
-        log.info("==> Cоздание новой категории: {}", categoryInDto);
-        return categoryService.create(categoryInDto);
+    public CategoryResponseDto create(@RequestBody @Valid CategoryRequestDto request) {
+        log.info("Creating a new category: {}", request);
+        return categoryService.createCategory(request);
     }
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable(value = "catId") Long id) {
-        log.info("==> Удалении категории с id =  {} ", id);
-        categoryService.delete(id);
+    public void delete(@PathVariable("categoryId") Long id) {
+        log.info("Deleting category with ID: {}", id);
+        categoryService.deleteCategory(id);
     }
 
     @PatchMapping("/{catId}")
-    public CategoryOutDto updateCategory(@PathVariable(value = "catId") @Min(1) Long id,
-                                         @RequestBody @Valid CategoryInDto categoryInDto) {
-        log.info("==> Обновдение категории с id = {}", id);
-        return categoryService.update(id, categoryInDto);
+    public CategoryResponseDto update(@PathVariable("categoryId") @Min(1) Long id,
+                                      @RequestBody @Valid CategoryRequestDto request) {
+        log.info("Updating category with ID: {}", id);
+        return categoryService.updateCategory(id, request);
     }
-
 }

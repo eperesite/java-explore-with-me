@@ -14,13 +14,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findByAuthor_IdAndId(Long userId, Long id);
 
-    @Query("select new ru.practicum.ewm.comment.CountCommentsByEventDto(c.event.id, COUNT(c)) " +
-            "from comments as c where c.event.id in ?1 " +
+    @Query("SELECT NEW ru.practicum.ewm.comment.CountCommentsByEventDto(c.event.id, COUNT(c)) " +
+            "FROM comments as c where c.event.id in ?1 " +
             "GROUP BY c.event.id")
-    List<CountCommentsByEventDto> countCommentByEvent(List<Long> eventIds);
+    List<CommentCountByEventDto> countCommentsByEventIds(List<Long> eventIds);
 
-    @Query("select c " +
-            "from comments as c " +
-            "where lower(c.text) like lower(concat('%', ?1, '%') )")
-    List<Comment> search(String text, Pageable pageable);
+    @Query("SELECT c " +
+            "FROM comments as c " +
+            "WHERE LOWER(c.text) LIKE LOWER(CONCAT('%', ?1, '%') )")
+    List<Comment> searchByContent(String text, Pageable pageable);
 }

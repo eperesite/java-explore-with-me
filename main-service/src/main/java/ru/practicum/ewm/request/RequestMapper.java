@@ -8,20 +8,18 @@ import ru.practicum.ewm.request.service.ParticipationRequestDto;
 public class RequestMapper {
     public static ParticipationRequestDto toParticipationRequestDto(Request request) {
         return ParticipationRequestDto.builder()
-                .id(request.getId())
-                .event(request.getEvent().getId())
-                .created(request.getCreated())
-                .requester(request.getId())
+                .requestId(request.getRequestId())
+                .eventId(request.getEvent().getId())
+                .createdAt(request.getCreatedAt())
+                .requesterId(request.getRequester().getUserId())
                 .status(request.getStatus())
                 .build();
     }
 
     public static Request toRequest(ParticipationRequestDto participationRequestDto) {
         return Request.builder()
-                .id(participationRequestDto.getId())
-                .event(null)
-                .created(participationRequestDto.getCreated())
-                .requester(null)
+                .requestId(participationRequestDto.getRequestId())
+                .createdAt(participationRequestDto.getCreatedAt())
                 .status(participationRequestDto.getStatus())
                 .build();
     }
