@@ -17,6 +17,7 @@ services:
     container_name: stats-db
     ports:
       - "6541:5432"
+      # - "5432:5432" //Idea
     environment:
       - POSTGRES_DB=stats
       - POSTGRES_USER=stats
@@ -29,8 +30,8 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
+      - stats-server
     environment:
-      - CLIENT_URL=http://stats-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - SPRING_DATASOURCE_USERNAME=ewm
       - SPRING_DATASOURCE_PASSWORD=ewm
@@ -38,7 +39,7 @@ services:
 
   ewm-db:
     image: postgres:16.1
-    container_name: ewn-db-container
+    container_name: ewn-db
     ports:
       - "6540:5432"
     environment:

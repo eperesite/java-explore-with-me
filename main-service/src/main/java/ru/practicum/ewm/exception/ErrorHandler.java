@@ -68,7 +68,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler({DuplicatedException.class, ValidatetionConflict.class})
+    @ExceptionHandler({DuplicatedException.class, ValidationConflictException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorAPI conflict(RuntimeException e) {
         log.error(stackToString(e));

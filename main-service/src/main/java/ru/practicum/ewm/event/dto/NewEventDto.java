@@ -9,7 +9,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.ewm.constants.DateFormatConstants;
+import ru.practicum.ewm.constants.DateTimeFormatConstants;
 import ru.practicum.ewm.location.Location;
 
 import java.time.LocalDateTime;
@@ -33,17 +33,18 @@ public class NewEventDto {
     @Length(max = 7000, min = 20)
     String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateFormatConstants.DATE_TIME_PATTERN)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeFormatConstants.DATE_TIME_PATTERN)
     LocalDateTime eventDate;
 
     @NotNull
     @Valid
     Location.LocationDto location;
 
-    private boolean paid;
+    boolean paid;
 
     @PositiveOrZero
     int participantLimit;
+
     boolean requestModeration = true;
 
     @NotNull

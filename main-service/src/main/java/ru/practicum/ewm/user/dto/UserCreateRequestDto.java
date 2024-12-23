@@ -11,12 +11,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserInDto {
+public class UserCreateRequestDto {
     @NotBlank
     @Size(min = 2, max = 250)
-    String name;
+    String fullName;
+
     @Email
     @NotBlank
     @Size(min = 6, max = 254)
-    String email;
+    String emailAddress;
 }
