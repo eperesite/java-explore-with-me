@@ -26,12 +26,12 @@ public class CompilationPublicController {
             @RequestParam(required = false) Boolean pinned,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size) {
-        log.info("==> Запрос на удаление подборки событий");
-        return compilationService.getCompilations(pinned, from, size);
+        log.info("Запрос на удаление подборки событий");
+        return compilationService.getCompilation(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
-    public CompilationResponseDto getCompilationById(@PathVariable Long compId) {
+    public CompilationResponseDto findCompilationById(@PathVariable Long compId) {
         log.info("Запрос на получение подборки с id =  {} ", + compId);
         return compilationService.findCompilationById(compId);
     }

@@ -6,9 +6,8 @@ import ru.practicum.ewm.event.EventRepository;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventStatus;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.exception.ValidationConflictException;
+import ru.practicum.ewm.exception.ValidatetionConflict;
 import ru.practicum.ewm.request.*;
-import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.mapper.RequestMapper;
 import ru.practicum.ewm.user.User;
 import ru.practicum.ewm.user.UserRepository;
@@ -27,11 +26,11 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         User user = checkUser(userId);
-        Event event = checkEvent(eventId);
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Событие с id= " + eventId + " не найдено"));
         LocalDateTime createdOn = LocalDateTime.now();
-
         validateNewRequest(event, userId, eventId);
-
         Request request = new Request();
         request.setCreated(createdOn);
         request.setRequester(user);
@@ -64,11 +63,9 @@ public class RequestServiceImpl implements RequestService {
         checkUser(userId);
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(
                 () -> new NotFoundException("Запрос с id= " + requestId + " не найден"));
-
         if (request.getStatus().equals(RequestStatus.CANCELED) || request.getStatus().equals(RequestStatus.REJECTED)) {
-            throw new ValidationConflictException("Запрос не подтвержден");
+            throw new ValidatetionConflict("Запрос не подтвержден");
         }
-
         request.setStatus(RequestStatus.CANCELED);
         Request requestAfterSave = requestRepository.save(request);
         return RequestMapper.toParticipationRequestDto(requestAfterSave);
@@ -76,33 +73,22 @@ public class RequestServiceImpl implements RequestService {
 
     private User checkUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("Пользователь с id = " + userId + " не существует"));
-    }
-
-    private Event checkEvent(Long eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() ->
-                new NotFoundException("Событие с id= " + eventId + " не найдено"));
+                new NotFoundException("Категории с id = " + userId + " не существует"));
     }
 
     private void validateNewRequest(Event event, Long userId, Long eventId) {
         if (event.getInitiator().getId().equals(userId)) {
-            throw new ValidationConflictException("Пользователь с id= " + userId + " является инициатором события");
+            throw new ValidatetionConflict("Пользователь с id= " + userId + " не инициатор события");
         }
-
         if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED)) {
-            throw new ValidationConflictException("Превышен лимит участников события");
+            throw new ValidatetionConflict("Превышен лимит участников события");
         }
-
         if (!event.getEventStatus().equals(EventStatus.PUBLISHED)) {
-            throw new ValidationConflictException("Событие не опубликовано");
+            throw new ValidatetionConflict("Событие не опубликовано");
         }
-
         if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
-            throw new ValidationConflictException("Попытка добавления дубликата запроса");
-        }
-
-        if (event.getEventDate().isBefore(LocalDateTime.now())) {
-            throw new ValidationConflictException("Событие уже завершено");
+            throw new ValidatetionConflict("Попытка добаления дубликата");
         }
     }
+
 }

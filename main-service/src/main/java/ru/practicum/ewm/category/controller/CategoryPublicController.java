@@ -22,7 +22,7 @@ public class CategoryPublicController {
     @GetMapping
     public List<CategoryResponseDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                                    @RequestParam(defaultValue = "10") @Positive Integer size) {
-        log.info("Запрос на получение категорий с размерами");
+        log.info("Запрос на получение категорий списком с размерами");
         return categoryService.getCategory(from, size);
     }
 

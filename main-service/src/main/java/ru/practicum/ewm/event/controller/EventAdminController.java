@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.event.dto.EventAdminParams;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
-import ru.practicum.ewm.event.service.EventService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,28 +35,25 @@ public class EventAdminController {
             @RequestParam(required = false) final String rangeEnd,
             @RequestParam(defaultValue = "0") @PositiveOrZero final int from,
             @RequestParam(defaultValue = "10") @Positive final int size) {
-        log.info("Запрос на получение всех событий (ADMIN)");
-
-        LocalDateTime rangeStartDateTime = (rangeStart != null) ? LocalDateTime.parse(rangeStart, formatter) : LocalDateTime.now();
-        LocalDateTime rangeEndDateTime = (rangeEnd != null) ? LocalDateTime.parse(rangeEnd, formatter) : LocalDateTime.now().plusYears(20);
-
-        EventAdminParams eventAdminParams = new EventAdminParams();
+        log.info("запрос на получение всех событий (ADMIN)");
+        LocalDateTime start = (rangeStart != null) ? LocalDateTime.parse(rangeStart, formatter) : LocalDateTime.now();
+        LocalDateTime end = (rangeEnd != null) ? LocalDateTime.parse(rangeEnd, formatter) : LocalDateTime.now().plusYears(20);
+        EventAdminParams eventAdminParams =  new EventAdminParams();
         eventAdminParams.setUsers(users);
         eventAdminParams.setStates(states);
         eventAdminParams.setCategories(categories);
-        eventAdminParams.setRangeStart(rangeStartDateTime);
-        eventAdminParams.setRangeEnd(rangeEndDateTime);
+        eventAdminParams.setRangeStart(start);
+        eventAdminParams.setRangeEnd(end);
         eventAdminParams.setFrom(from);
         eventAdminParams.setSize(size);
-
         return eventService.getAllEventsAdmin(eventAdminParams);
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEventAdmin(
-            @PathVariable(value = "eventId") @Min(1) Long eventId,
-            @RequestBody @Valid UpdateEventAdminRequest inputUpdate) {
-        log.info("Запрос на обновление события с id = {}", eventId);
+    public EventFullDto updateEventAdmin(@PathVariable(value = "eventId") @Min(1) Long eventId,
+                                         @RequestBody @Valid UpdateEventAdminRequest inputUpdate) {
+
+        log.info("Запрос на обновление списка событий");
         return eventService.updateEventsAdmin(eventId, inputUpdate);
     }
 }

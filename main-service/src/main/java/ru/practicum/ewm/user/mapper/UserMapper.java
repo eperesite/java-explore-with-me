@@ -1,7 +1,8 @@
-package ru.practicum.ewm.user;
+package ru.practicum.ewm.user.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.ewm.user.User;
 import ru.practicum.ewm.user.dto.UserCreateRequestDto;
 import ru.practicum.ewm.user.dto.UserResponseDto;
 import ru.practicum.ewm.user.dto.UserShortResponseDto;

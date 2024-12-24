@@ -6,10 +6,10 @@ import ru.practicum.ewm.user.dto.UserResponseDto;
 import java.util.List;
 
 public interface UserService {
-    List<UserResponseDto> getUser(List<Long> ids, Integer from, Integer size);
+    List<UserResponseDto> get(List<Long> ids, Integer from, Integer size);
 
-    UserResponseDto createUser(UserCreateRequestDto inDto);
+    UserResponseDto create(UserCreateRequestDto inDto);
 
-    void deleteUser(Long userId);
+    void delete(Long userId);
 
 }

@@ -3,7 +3,7 @@ package ru.practicum.ewm.event.service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.event.dto.*;
-import ru.practicum.ewm.request.dto.ParticipationRequestDto;
+import ru.practicum.ewm.request.service.ParticipationRequestDto;
 
 import java.util.List;
 import java.util.Map;

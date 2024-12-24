@@ -26,15 +26,15 @@ public class UserController {
                                           @RequestParam(defaultValue = "10") @Positive Integer size) {
         log.info("Запрос на получение списка пользователей");
 
-        return service.getUser(ids, from, size);
+        return service.get(ids, from, size);
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto createUsers(@RequestBody @Valid UserCreateRequestDto userCreateRequestDto) {
         log.info("Создание User: {}", userCreateRequestDto);
-        UserResponseDto newUserDto = service.createUser(userCreateRequestDto);
-        log.info("<==Создан User: {}", newUserDto);
+        UserResponseDto newUserDto = service.create(userCreateRequestDto);
+        log.info("Создан User: {}", newUserDto);
         return newUserDto;
     }
 
@@ -42,7 +42,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUsers(@PathVariable long id) {
         log.info("Удалениее User по: {}", id);
-        service.deleteUser(id);
-        log.info("спешно удален");
+        service.delete(id);
+        log.info("Успешно удален");
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.event.EventRepository;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.exception.ValidationConflictException;
+import ru.practicum.ewm.exception.ValidatetionConflict;
 import ru.practicum.ewm.compilation.Compilation;
 import ru.practicum.ewm.compilation.CompilationMapper;
 import ru.practicum.ewm.compilation.CompilationRepository;
@@ -31,17 +31,14 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = CompilationMapper.toCompilation(compilationDto);
         compilation.setPinned(Optional.ofNullable(compilation.getPinned()).orElse(false));
 
-        Set<Long> eventIds = Optional.ofNullable(compilationDto.getEvents()).orElse(Collections.emptySet());
-        List<Event> events = eventRepository.findAllByIdIn(new ArrayList<>(eventIds));
+        Set<Long> compEventIds = (compilationDto.getEvents() != null) ? compilationDto.getEvents() : Collections.emptySet();
+        List<Long> eventIds = new ArrayList<>(compEventIds);
+        List<Event> events = eventRepository.findAllByIdIn(eventIds);
+        Set<Event> eventsSet = new HashSet<>(events);
+        compilation.setEvents(eventsSet);
 
-        if (events.size() != eventIds.size()) {
-            throw new ValidationConflictException("Некоторые события не найдены в базе данных");
-        }
-
-        compilation.setEvents(new HashSet<>(events));
-
-        Compilation savedCompilation = compilationRepository.save(compilation);
-        return CompilationMapper.toDto(savedCompilation);
+        Compilation compilationAfterSave = compilationRepository.save(compilation);
+        return CompilationMapper.toDto(compilationAfterSave);
     }
 
     @Transactional
@@ -49,23 +46,19 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationResponseDto updateCompilation(Long compId, CompilationUpdateRequestDto update) {
         Compilation compilation = checkCompilation(compId);
 
-        if (update.getEvents() != null) {
-            List<Event> events = eventRepository.findAllByIdIn(new ArrayList<>(update.getEvents()));
-            if (events.size() != update.getEvents().size()) {
-                throw new ValidationConflictException("Некоторые события не найдены в базе данных");
-            }
-            compilation.setEvents(new HashSet<>(events));
+        Set<Long> eventIds = update.getEvents();
+
+        if (eventIds != null) {
+            List<Event> events = eventRepository.findAllByIdIn(new ArrayList<>(eventIds));
+            Set<Event> eventSet = new HashSet<>(events);
+            compilation.setEvents(eventSet);
         }
 
         compilation.setPinned(Optional.ofNullable(update.getPinned()).orElse(compilation.getPinned()));
-
-        if (update.getTitle() != null) {
-            String newTitle = update.getTitle().trim();
-            if (newTitle.isEmpty()) {
-                throw new ValidationConflictException("Название подборки не может быть пустым или состоять из пробелов");
-            }
-            compilation.setTitle(newTitle);
+        if (compilation.getTitle().isBlank()) {
+            throw new ValidatetionConflict("Title не может состоять из пробелов");
         }
+        compilation.setTitle(Optional.ofNullable(update.getTitle()).orElse(compilation.getTitle()));
 
         return CompilationMapper.toDto(compilation);
     }
@@ -73,19 +66,15 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public void deleteCompilation(Long compId) {
-        Compilation compilation = checkCompilation(compId);
-        compilationRepository.delete(compilation);
+        checkCompilation(compId);
+        compilationRepository.deleteById(compId);
     }
 
     @Override
-    public List<CompilationResponseDto> getCompilations(Boolean pinned, Integer from, Integer size) {
-        if (from < 0 || size <= 0) {
-            throw new IllegalArgumentException("Параметры пагинации должны быть положительными");
-        }
+    public List<CompilationResponseDto> getCompilation(Boolean pinned, Integer from, Integer size) {
 
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = PageRequest.of(from, size);
         List<Compilation> compilations;
-
         if (pinned == null) {
             compilations = compilationRepository.findAll(pageRequest).getContent();
         } else {
@@ -103,7 +92,9 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Compilation checkCompilation(Long compId) {
-        return compilationRepository.findById(compId).orElseThrow(() ->
-                new NotFoundException("Подборка с идентификатором " + compId + " не найдена"));
+        if (!compilationRepository.existsById(compId)) {
+            throw new NotFoundException("Compilation с id = " + compId + " не найден");
+        }
+        return compilationRepository.findById(compId).orElse(null);
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.user.UserMapper;
+import ru.practicum.ewm.user.mapper.UserMapper;
 import ru.practicum.ewm.user.UserRepository;
 import ru.practicum.ewm.user.dto.UserCreateRequestDto;
 import ru.practicum.ewm.user.dto.UserResponseDto;
@@ -21,13 +21,13 @@ public class UserServiceImpl implements UserService  {
 
     @Transactional
     @Override
-    public UserResponseDto createUser(UserCreateRequestDto userCreateRequestDto) {
+    public UserResponseDto create(UserCreateRequestDto userCreateRequestDto) {
         return UserMapper.toUserOutDto(userRepository.save(UserMapper.toUser(userCreateRequestDto)));
     }
 
     @Transactional
     @Override
-    public void deleteUser(Long userId) {
+    public void delete(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с id= " + userId + " не найден");
         }
@@ -35,11 +35,11 @@ public class UserServiceImpl implements UserService  {
     }
 
     @Override
-    public List<UserResponseDto> getUser(List<Long> listId, Integer from, Integer size) {
-        PageRequest page = PageRequest.of(from / size, size);
+    public List<UserResponseDto> get(List<Long>  listId, Integer from, Integer size) {
         List<UserResponseDto> listUserResponseDto;
 
-        if (listId != null && !listId.isEmpty()) {
+        PageRequest page = PageRequest.of(from / size, size);
+        if (listId != null) {
             listUserResponseDto = userRepository.findByIdIn(listId, page).stream()
                     .map(UserMapper::toUserOutDto)
                     .collect(Collectors.toList());
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService  {
                     .map(UserMapper::toUserOutDto)
                     .collect(Collectors.toList());
         }
-
         return listUserResponseDto;
     }
+
 }
