@@ -6,16 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.StatDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StatisticsClient  extends BaseClient {
 
     @Autowired
-    public StatisticsClient(@Value("${stats-service.url}") String serviceUrl, RestTemplateBuilder builder) {
+    public StatisticsClient(@Value("${client.url}") String serviceUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serviceUrl + ""))
@@ -29,16 +29,13 @@ public class StatisticsClient  extends BaseClient {
     }
 
     public ResponseEntity<Object> getStatistics(String start, String end, List<String> uris, Boolean unique) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .queryParam("unique", unique);
-
-        if (uris != null && !uris.isEmpty()) {
-            builder.queryParam("uris", String.join(",", uris));
-        }
-
-        return get(builder.toUriString(), null);
+        Map<String, Object> params = Map.of(
+                "start", start,
+                "end", end,
+                "uris", uris,
+                "unique", unique
+        );
+        return get("/stats?start={start}&end={end}&uris=uris&unique={unique}", params);
     }
 
 }
