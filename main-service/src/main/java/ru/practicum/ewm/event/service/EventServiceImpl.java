@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
         Event oldEvent = checkEvent(eventId);
 
         if (oldEvent.getEventStatus().equals(EventStatus.PUBLISHED) || oldEvent.getEventStatus().equals(EventStatus.CANCELED)) {
-            throw new ValidatetionConflict("Событие со статусом status= " + oldEvent.getEventStatus() +  "изменить нельзя");
+            throw new ValidatetionConflict("Событие со статусом status= " + oldEvent.getEventStatus() + "изменить нельзя");
         }
 
         Event eventForUpdate = eventUpdateBase(oldEvent, updateEvent);
@@ -382,12 +382,13 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> viewStatsMap = new HashMap<>();
 
         if (earliestDate != null) {
-            ResponseEntity<Object> response = statsClient.getStatistics(earliestDate.toString(), LocalDateTime.now().toString(),uris, true); ///????
-            List<StatOutDto> statOutDtoList = objectMapper.convertValue(response.getBody(), new TypeReference<>() {}); ///// ????
+            ResponseEntity<Object> response = statsClient.getStatistics(earliestDate.toString(), LocalDateTime.now().toString(), uris, true); ///????
+            List<StatOutDto> statOutDtoList = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
+            }); ///// ????
 
             viewStatsMap = statOutDtoList.stream()
                     .filter(statsDto -> statsDto.getUri().startsWith("/events/"))
-                    .collect(Collectors.toMap(statsDto -> Long.parseLong(statsDto.getUri().substring("/events/".length())),StatOutDto::getHits));
+                    .collect(Collectors.toMap(statsDto -> Long.parseLong(statsDto.getUri().substring("/events/".length())), StatOutDto::getHits));
         }
         return viewStatsMap;
     }
@@ -463,7 +464,6 @@ public class EventServiceImpl implements EventService {
                                                                       final EventRequestStatusUpdateRequest requestUpdateDto) {
 
         final User user = checkUser(userId);
-
         final Event event = checkEvent(eventId);
 
         if (!Objects.equals(event.getInitiator(), user)) {
@@ -492,9 +492,9 @@ public class EventServiceImpl implements EventService {
             }
             log.info("Запрос на отклонение заявки подтвержден.");
 
-            List<ParticipationRequestDto> rejectedRequests = requests.stream()
-                    .peek(request -> request.setStatus(RequestStatus.REJECTED))
-                    .map(requestRepository::save)
+            requests.forEach(request -> request.setStatus(RequestStatus.REJECTED));
+            List<Request> savedRequests = requestRepository.saveAll(requests);
+            List<ParticipationRequestDto> rejectedRequests = savedRequests.stream()
                     .map(RequestMapper::toParticipationRequestDto)
                     .toList();
             requestMap.put("rejectedRequests", rejectedRequests);
@@ -510,23 +510,25 @@ public class EventServiceImpl implements EventService {
             }
 
             long limit = event.getParticipantLimit() - confRequests;
-            final List<Request> confirmedList = requests.stream()
+            List<Request> confirmedList = requests.stream()
                     .limit(limit)
                     .peek(request -> request.setStatus(RequestStatus.CONFIRMED))
-                    .map(requestRepository::save).toList();
+                    .toList();
+            List<Request> savedConfirmedRequests = requestRepository.saveAll(confirmedList);
             log.info("Заявки на участие сохранены со статусом <ПОДТВЕРЖДЕНА>.");
 
-            final List<ParticipationRequestDto> confirmedRequests = confirmedList.stream()
+            List<ParticipationRequestDto> confirmedRequests = savedConfirmedRequests.stream()
                     .map(RequestMapper::toParticipationRequestDto)
                     .toList();
             requestMap.put("confirmedRequests", confirmedRequests);
 
-            final List<Request> rejectedList = requests.stream()
+            List<Request> rejectedList = requests.stream()
                     .skip(limit)
                     .peek(request -> request.setStatus(RequestStatus.REJECTED))
-                    .map(requestRepository::save).toList();
+                    .toList();
+            List<Request> savedRejectedRequests = requestRepository.saveAll(rejectedList);
             log.info("Часть заявок на участие сохранены со статусом <ОТМЕНЕНА>, в связи с превышением лимита.");
-            final List<ParticipationRequestDto> rejectedRequests = rejectedList.stream()
+            List<ParticipationRequestDto> rejectedRequests = savedRejectedRequests.stream()
                     .map(RequestMapper::toParticipationRequestDto)
                     .toList();
             requestMap.put("rejectedRequests", rejectedRequests);

@@ -1,23 +1,24 @@
 package ru.practicum.ewm.event.model;
 
-import jakarta.persistence.Entity;
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.category.Category;
 import ru.practicum.ewm.location.Location;
 import ru.practicum.ewm.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity(name = "events")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -68,4 +69,16 @@ public class Event {
     @Column(name = "status")
     EventStatus eventStatus;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(id, event.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
