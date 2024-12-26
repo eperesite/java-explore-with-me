@@ -1,7 +1,6 @@
 package ru.practicum;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -30,13 +29,10 @@ public class StatisticsController {
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     public List<StatOutDto> get(
-            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) @Valid @NotNull LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) @Valid @NotNull LocalDateTime end,
+            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime start,
+            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique) {
-        if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start date must be before end date");
-        }
         return statisticsService.get(start, end, uris, unique);
     }
 }
