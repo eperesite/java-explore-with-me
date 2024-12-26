@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentOutDto {
+public class CommentResponseDto {
     Long id;
     String text;
     Long authorId;

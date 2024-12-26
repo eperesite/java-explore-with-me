@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.comment.Comment;
 import ru.practicum.ewm.comment.CommentMapper;
 import ru.practicum.ewm.comment.CommentRepository;
-import ru.practicum.ewm.comment.dto.CommentInDto;
-import ru.practicum.ewm.comment.dto.CommentOutDto;
+import ru.practicum.ewm.comment.dto.CommentRequestDto;
+import ru.practicum.ewm.comment.dto.CommentResponseDto;
 import ru.practicum.ewm.event.EventRepository;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.exception.NotFoundException;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceBase implements CommentService {
+public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
@@ -32,7 +32,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional
-    public CommentOutDto update(Long userId, Long commentId, CommentInDto updateCommentDto) {
+    public CommentResponseDto updateComment(Long userId, Long commentId, CommentRequestDto updateCommentDto) {
         User user = checkUser(userId);
         Comment comment = checkComment(commentId);
         checkAuthorComment(user, comment);
@@ -45,7 +45,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentOutDto> getByUser(Long userId) {
+    public List<CommentResponseDto> getCommentByUser(Long userId) {
         checkUser(userId);
         List<Comment> commentList = commentRepository.findByAuthor_Id(userId);
         return commentList.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
@@ -53,7 +53,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public CommentOutDto getByUserAndCommentId(Long userId, Long commentId) {
+    public CommentResponseDto getCommentByUserAndCommentId(Long userId, Long commentId) {
         checkUser(userId);
         Comment comment = commentRepository.findByAuthor_IdAndId(userId, commentId).orElseThrow(() -> new NotFoundException(
                 String.format("У пользователя c id = {}  не найден комментарий с id = {}", userId, commentId)));
@@ -62,7 +62,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentOutDto> getByEvent(Long eventId, Integer from, Integer size) {
+    public List<CommentResponseDto> getCommentByEvent(Long eventId, Integer from, Integer size) {
         Event event = checkEvent(eventId);
         PageRequest pageable = PageRequest.of(from / size, size);
         List<Comment> commentList = commentRepository.findAllByEvent_Id(eventId, pageable);
@@ -70,7 +70,7 @@ public class CommentServiceBase implements CommentService {
     }
 
     @Override
-    public void delete(Long userId, Long commentId) {
+    public void deleteComment(Long userId, Long commentId) {
         User user = checkUser(userId);
         Comment comment = checkComment(commentId);
         checkAuthorComment(user, comment);
@@ -85,7 +85,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional
-    public List<CommentOutDto> search(String text, Integer from, Integer size) {
+    public List<CommentResponseDto> searchComment(String text, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         if (text.isBlank()) {
             return Collections.emptyList();
@@ -96,7 +96,7 @@ public class CommentServiceBase implements CommentService {
 
     @Override
     @Transactional
-    public CommentOutDto create(Long userId, Long eventId, CommentInDto commentDto) {
+    public CommentResponseDto createComment(Long userId, Long eventId, CommentRequestDto commentDto) {
         Event event = checkEvent(eventId);
         User user = checkUser(userId);
         return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto, event, user)));

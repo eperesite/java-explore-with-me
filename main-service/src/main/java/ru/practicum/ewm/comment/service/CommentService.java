@@ -1,24 +1,24 @@
 package ru.practicum.ewm.comment.service;
 
-import ru.practicum.ewm.comment.dto.CommentInDto;
-import ru.practicum.ewm.comment.dto.CommentOutDto;
+import ru.practicum.ewm.comment.dto.CommentRequestDto;
+import ru.practicum.ewm.comment.dto.CommentResponseDto;
 
 import java.util.List;
 
 public interface  CommentService {
-    CommentOutDto create(Long userId, Long eventId, CommentInDto commentDto);
+    CommentResponseDto createComment(Long userId, Long eventId, CommentRequestDto commentDto);
 
-    CommentOutDto update(Long userId, Long commentId, CommentInDto updateCommentDto);
+    CommentResponseDto updateComment(Long userId, Long commentId, CommentRequestDto updateCommentDto);
 
-    List<CommentOutDto> getByUser(Long userId);
+    List<CommentResponseDto> getCommentByUser(Long userId);
 
-    CommentOutDto getByUserAndCommentId(Long userId, Long commentId);
+    CommentResponseDto getCommentByUserAndCommentId(Long userId, Long commentId);
 
-    List<CommentOutDto> getByEvent(Long eventId, Integer from, Integer size);
+    List<CommentResponseDto> getCommentByEvent(Long eventId, Integer from, Integer size);
 
-    void delete(Long userId, Long commentId);
+    void deleteComment(Long userId, Long commentId);
 
     void deleteAdmin(Long commentId);
 
-    List<CommentOutDto> search(String text, Integer from, Integer size);
+    List<CommentResponseDto> searchComment(String text, Integer from, Integer size);
 }
