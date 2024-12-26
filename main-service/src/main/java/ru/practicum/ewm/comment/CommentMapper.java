@@ -2,8 +2,8 @@ package ru.practicum.ewm.comment;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.comment.dto.CommentRequestDto;
-import ru.practicum.ewm.comment.dto.CommentResponseDto;
+import ru.practicum.ewm.comment.dto.CommentInDto;
+import ru.practicum.ewm.comment.dto.CommentOutDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.User;
 
@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
-    public static CommentResponseDto toCommentDto(Comment comment) {
-        return CommentResponseDto.builder()
+    public static CommentOutDto toCommentDto(Comment comment) {
+        return CommentOutDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .authorId(comment.getAuthor().getId())
@@ -22,7 +22,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static Comment toComment(CommentRequestDto commentDto, Event event, User user) {
+    public static Comment toComment(CommentInDto commentDto, Event event, User user) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .event(event)
@@ -32,7 +32,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public  static Comment toComment(CommentResponseDto commentDto) {
+    public  static Comment toComment(CommentOutDto commentDto) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .build();

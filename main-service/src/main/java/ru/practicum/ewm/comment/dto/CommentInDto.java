@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentRequestDto {
+public class CommentInDto {
     @NotBlank
     @Size(min = 2, max = 1500)
     private String text;
